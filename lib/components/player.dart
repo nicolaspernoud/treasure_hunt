@@ -8,40 +8,70 @@ class PlayerView extends StatefulWidget {
 }
 
 class _PlayerViewState extends State<PlayerView> {
+  var _givenAnswer = "";
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 300,
-      width: 300,
-      child: Consumer<Hunt>(
+        width: 800,
+        child: Consumer<Hunt>(
           builder: (context, hunt, child) => Stepper(
-                currentStep: hunt.activeStage,
-                onStepCancel: () {
-                  if (hunt.activeStage <= 0) {
-                    return;
-                  }
-                  setState(() {
-                    hunt.activeStage--;
-                  });
-                },
-                onStepContinue: () {
-                  if (hunt.activeStage >= hunt.stages.length - 1) {
-                    return;
-                  }
-                  setState(() {
-                    hunt.nextStage();
-                  });
-                },
-                steps: hunt.stages
-                    .map((e) => Step(
-                          title: Text(e.title),
-                          content: Container(
-                              alignment: Alignment.centerLeft,
-                              child:
-                                  e.hintIsPlace ? Text(e.hint) : Text(e.hint)),
-                        ))
-                    .toList(),
-              )),
-    );
+            currentStep: hunt.activeStage,
+            onStepCancel: () {
+              if (hunt.activeStage <= 0) {
+                return;
+              }
+              setState(() {
+                hunt.activeStage--;
+              });
+            },
+            onStepContinue: () async {
+              if (hunt.activeStage >= hunt.stages.length - 1) {
+                return;
+              }
+              if (hunt.stages[hunt.activeStage].answer == _givenAnswer) {
+                setState(() {
+                  hunt.nextStage();
+                });
+              } else {
+                await showDialog(
+                  context: context,
+                  builder: (context) => new AlertDialog(
+                    title: new Text('Wrong answer'),
+                    content: Text(
+                        'Your answer is not the one we were waiting for !'),
+                    actions: <Widget>[
+                      new TextButton(
+                        onPressed: () {
+                          Navigator.of(context, rootNavigator: true)
+                              .pop(); // dismisses only the dialog and returns nothing
+                        },
+                        child: new Text('OK'),
+                      ),
+                    ],
+                  ),
+                );
+              }
+            },
+            steps: hunt.stages
+                .map((e) => Step(
+                    title: Text(e.title),
+                    content: Column(
+                      children: [
+                        e.hintIsPlace ? Text(e.hint) : Text(e.hint),
+                        TextField(
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: 'Your answer',
+                          ),
+                          onChanged: (text) {
+                            _givenAnswer = text;
+                          },
+                        )
+                      ],
+                    )))
+                .toList(),
+          ),
+        ));
   }
 }

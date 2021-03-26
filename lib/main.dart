@@ -5,6 +5,7 @@ import 'package:treasurehunt/components/player.dart';
 import 'models/hunt.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   var h = Hunt("My hunt");
   h.readHunt();
   runApp(

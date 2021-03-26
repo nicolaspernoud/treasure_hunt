@@ -1,11 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Hunt extends ChangeNotifier {
   String _title;
@@ -28,6 +26,8 @@ class Hunt extends ChangeNotifier {
   Hunt(this._title) {
     addStage(Stage(
         "First stage", false, "The answer is : next stage", "next stage"));
+    addStage(Stage("Second stage", false, "The answer is : next stage again",
+        "next stage again"));
   }
 
   notifyAndPersist() {
@@ -43,22 +43,10 @@ class Hunt extends ChangeNotifier {
   List<Stage> get stages => _stages;
 
   // Persistence
-  String _fileName = "hunt.json";
-
-  Future<File> get localFile async {
-    if (Platform.isAndroid) {
-      final directory = await getExternalStorageDirectory();
-      await new Directory('${directory.path}').create(recursive: true);
-      return File('${directory.path}/$_fileName');
-    }
-    final directory = await getApplicationDocumentsDirectory();
-    return File('${directory.path}/$_fileName');
-  }
-
   readHunt() async {
     try {
-      final file = await localFile;
-      String contents = await file.readAsString();
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String contents = prefs.getString("hunt");
       fromJson(contents);
       notifyListeners();
     } catch (e) {
@@ -67,8 +55,8 @@ class Hunt extends ChangeNotifier {
   }
 
   void writeHunt() async {
-    final file = await localFile;
-    await file.writeAsString(toJson());
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString("hunt", toJson());
   }
 
   fromJson(String source) {
