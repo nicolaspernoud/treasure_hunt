@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:treasurehunt/components/admin.dart';
 import 'package:treasurehunt/components/player.dart';
 
 import 'models/hunt.dart';
@@ -45,12 +46,43 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        actions: [
+          IconButton(icon: Icon(Icons.list), onPressed: _adminMode),
+        ],
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[PlayerView()],
+          children: <Widget>[AdminView()],
         ),
+      ),
+    );
+  }
+
+  void _adminMode() {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (BuildContext context) {
+          return Scaffold(
+              appBar: AppBar(
+                title: Text('Admin mode'),
+              ),
+              body: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[PlayerView()],
+                ),
+              ),
+              floatingActionButton: Consumer<Hunt>(
+                  builder: (context, hunt, child) => FloatingActionButton(
+                        onPressed: () {
+                          hunt.addStage(Stage("New stage", false,
+                              "The answer is : new stage", "new stage"));
+                        },
+                        tooltip: 'Increment',
+                        child: Icon(Icons.add),
+                      ))); // This trailing comma makes auto-formatti;
+        },
       ),
     );
   }
