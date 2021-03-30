@@ -14,60 +14,65 @@ class _AdminViewState extends State<AdminView> {
         width: 800,
         child: Consumer<Hunt>(
             builder: (context, hunt, child) => SingleChildScrollView(
-                  child: Column(
+                  child: Wrap(
+                    runSpacing: 20,
+                    //crossAxisAlignment: CrossAxisAlignment.center,
                     children: hunt.stages
                         .map((e) => Card(
+                            child: Padding(
+                                padding: EdgeInsets.all(20),
                                 child: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                  Wrap(
-                                    runSpacing: 20,
-                                    children: [
-                                      TextFormField(
-                                        initialValue: e.title,
-                                        decoration: InputDecoration(
-                                          border: OutlineInputBorder(),
-                                          labelText: 'Step title',
-                                        ),
-                                        onChanged: (text) {
-                                          e.title = text;
-                                          hunt.notifyAndPersist();
-                                        },
+                                      Wrap(
+                                        runSpacing: 20,
+                                        children: [
+                                          TextFormField(
+                                            initialValue: e.title,
+                                            decoration: InputDecoration(
+                                              border: OutlineInputBorder(),
+                                              labelText: 'Step title',
+                                            ),
+                                            onChanged: (text) {
+                                              e.title = text;
+                                              hunt.notifyAndPersist();
+                                            },
+                                          ),
+                                          SwitchListTile(
+                                            title: const Text(
+                                                'Hint is a location'),
+                                            value: e.hintIsPlace,
+                                            onChanged: (v) {
+                                              e.hintIsPlace = v;
+                                              hunt.notifyAndPersist();
+                                            },
+                                            secondary: const Icon(Icons.map),
+                                          ),
+                                          TextFormField(
+                                            initialValue: e.hint,
+                                            decoration: InputDecoration(
+                                              border: OutlineInputBorder(),
+                                              labelText: 'Hint',
+                                            ),
+                                            onChanged: (text) {
+                                              e.hint = text;
+                                              hunt.notifyAndPersist();
+                                            },
+                                          ),
+                                          TextFormField(
+                                            initialValue: e.answer,
+                                            decoration: InputDecoration(
+                                              border: OutlineInputBorder(),
+                                              labelText: 'Answer',
+                                            ),
+                                            onChanged: (text) {
+                                              e.answer = text;
+                                              hunt.notifyAndPersist();
+                                            },
+                                          ),
+                                        ],
                                       ),
-                                      SwitchListTile(
-                                        title: const Text('Hint is a location'),
-                                        value: e.hintIsPlace,
-                                        onChanged: (v) {
-                                          e.hintIsPlace = v;
-                                          hunt.notifyAndPersist();
-                                        },
-                                        secondary: const Icon(Icons.map),
-                                      ),
-                                      TextFormField(
-                                        initialValue: e.hint,
-                                        decoration: InputDecoration(
-                                          border: OutlineInputBorder(),
-                                          labelText: 'Hint',
-                                        ),
-                                        onChanged: (text) {
-                                          e.hint = text;
-                                          hunt.notifyAndPersist();
-                                        },
-                                      ),
-                                      TextFormField(
-                                        initialValue: e.answer,
-                                        decoration: InputDecoration(
-                                          border: OutlineInputBorder(),
-                                          labelText: 'Answer',
-                                        ),
-                                        onChanged: (text) {
-                                          e.answer = text;
-                                          hunt.notifyAndPersist();
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                ])))
+                                    ]))))
                         .toList(),
                   ),
                 )));

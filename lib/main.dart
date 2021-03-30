@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Treasure Hunt',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -41,49 +41,37 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  var _adminMode = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-        actions: [
-          IconButton(icon: Icon(Icons.list), onPressed: _adminMode),
-        ],
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[AdminView()],
+        appBar: AppBar(
+          title: Text(widget.title),
+          actions: [
+            Center(child: Text("Admin mode")),
+            Switch(
+              value: _adminMode,
+              onChanged: (v) {
+                setState(() {
+                  _adminMode = v;
+                });
+              },
+            ),
+          ],
         ),
-      ),
-    );
-  }
-
-  void _adminMode() {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (BuildContext context) {
-          return Scaffold(
-              appBar: AppBar(
-                title: Text('Admin mode'),
-              ),
-              body: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[PlayerView()],
-                ),
-              ),
-              floatingActionButton: Consumer<Hunt>(
-                  builder: (context, hunt, child) => FloatingActionButton(
-                        onPressed: () {
-                          hunt.addStage(Stage("New stage", false,
-                              "The answer is : new stage", "new stage"));
-                        },
-                        tooltip: 'Increment',
-                        child: Icon(Icons.add),
-                      ))); // This trailing comma makes auto-formatti;
-        },
-      ),
-    );
+        body: Center(
+          child: _adminMode ? AdminView() : PlayerView(),
+        ),
+        floatingActionButton: _adminMode
+            ? Consumer<Hunt>(
+                builder: (context, hunt, child) => FloatingActionButton(
+                      onPressed: () {
+                        hunt.addStage(Stage("New stage", false,
+                            "The answer is : new stage", "new stage"));
+                      },
+                      tooltip: 'Increment',
+                      child: Icon(Icons.add),
+                    ))
+            : null);
   }
 }
