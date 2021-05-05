@@ -21,18 +21,31 @@ class _PlayerViewState extends State<PlayerView> {
               if (hunt.activeStage <= 0) {
                 return;
               }
-              setState(() {
-                hunt.activeStage--;
-              });
+              hunt.activeStage--;
             },
             onStepContinue: () async {
-              if (hunt.activeStage >= hunt.stages.length - 1) {
-                return;
-              }
               if (hunt.stages[hunt.activeStage].answer == _givenAnswer) {
-                setState(() {
-                  hunt.nextStage();
-                });
+                if (hunt.activeStage >= hunt.stages.length - 1) {
+                  await showDialog(
+                    context: context,
+                    builder: (context) => new AlertDialog(
+                      title: Text('Bravo !'),
+                      content: Text('You managed to find the treasure !'),
+                      actions: <Widget>[
+                        new TextButton(
+                          onPressed: () {
+                            Navigator.of(context, rootNavigator: true)
+                                .pop(); // dismisses only the dialog and returns nothing
+                          },
+                          child: new Text('OK'),
+                        ),
+                      ],
+                    ),
+                  );
+                  return;
+                }
+
+                hunt.nextStage();
               } else {
                 await showDialog(
                   context: context,

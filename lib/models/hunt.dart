@@ -24,9 +24,9 @@ class Hunt extends ChangeNotifier {
   var _stages = <Stage>[];
 
   Hunt(this._title) {
-    addStage(Stage(
+    _stages.add(Stage(
         "First stage", false, "The answer is : next stage", "next stage"));
-    addStage(Stage("Second stage", false, "The answer is : next stage again",
+    _stages.add(Stage("Second stage", false, "The answer is : next stage again",
         "next stage again"));
   }
 
