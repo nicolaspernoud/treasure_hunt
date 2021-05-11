@@ -128,6 +128,11 @@ class Stage {
     this.hunt.notifyAndPersist();
   }
 
+  remove() {
+    this.hunt._stages.removeWhere((element) => element.title == _title);
+    this.hunt.notifyAndPersist();
+  }
+
   Map<String, dynamic> toJson() => {
         'title': _title,
         'hintIsPlace': _hintIsPlace,

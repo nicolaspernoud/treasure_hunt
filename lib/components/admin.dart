@@ -66,6 +66,15 @@ class _AdminViewState extends State<AdminView> {
                                               e.answer = text;
                                             },
                                           ),
+                                          IconButton(
+                                            icon: const Icon(
+                                                Icons.delete_forever),
+                                            color: Colors.red,
+                                            tooltip: 'Delete this stage',
+                                            onPressed: () {
+                                              e.remove();
+                                            },
+                                          ),
                                         ],
                                       ),
                                     ]))))
