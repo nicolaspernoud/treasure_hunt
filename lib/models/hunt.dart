@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-abstract class SharedPreferencesPersister extends ChangeNotifier {
+abstract class SharedPreferencesPersister {
   fromJson(String source);
   toJson();
 
@@ -15,7 +15,6 @@ abstract class SharedPreferencesPersister extends ChangeNotifier {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String contents = prefs.getString("hunt");
       fromJson(contents);
-      notifyListeners();
     } catch (e) {
       print("hunt could not be loaded from file, defaulting to new hunt");
     }
@@ -25,14 +24,9 @@ abstract class SharedPreferencesPersister extends ChangeNotifier {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString("hunt", toJson());
   }
-
-  notifyAndPersist() {
-    notifyListeners();
-    write();
-  }
 }
 
-class Hunt extends SharedPreferencesPersister {
+class Hunt extends ChangeNotifier with SharedPreferencesPersister {
   String _title;
   String get title => this._title;
   set title(String value) => this._title = value;
@@ -78,6 +72,16 @@ class Hunt extends SharedPreferencesPersister {
   String toJson() {
     Map<String, dynamic> huntMap = {'_title': title, '_stages': _stages};
     return jsonEncode(huntMap);
+  }
+
+  read() async {
+    await super.read();
+    notifyListeners();
+  }
+
+  notifyAndPersist() {
+    notifyListeners();
+    write();
   }
 }
 
