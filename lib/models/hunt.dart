@@ -5,7 +5,34 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class Hunt extends ChangeNotifier {
+abstract class SharedPreferencesPersister extends ChangeNotifier {
+  fromJson(String source);
+  toJson();
+
+  // Persistence
+  read() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String contents = prefs.getString("hunt");
+      fromJson(contents);
+      notifyListeners();
+    } catch (e) {
+      print("hunt could not be loaded from file, defaulting to new hunt");
+    }
+  }
+
+  void write() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString("hunt", toJson());
+  }
+
+  notifyAndPersist() {
+    notifyListeners();
+    write();
+  }
+}
+
+class Hunt extends SharedPreferencesPersister {
   String _title;
   String get title => this._title;
   set title(String value) => this._title = value;
@@ -30,40 +57,22 @@ class Hunt extends ChangeNotifier {
         "next stage again"));
   }
 
-  notifyAndPersist() {
-    notifyListeners();
-    writeHunt();
-  }
-
   addStage(Stage s) {
     _stages.add(s);
+    s.hunt = this;
     notifyAndPersist();
   }
 
   List<Stage> get stages => _stages;
 
-  // Persistence
-  readHunt() async {
-    try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String contents = prefs.getString("hunt");
-      fromJson(contents);
-      notifyListeners();
-    } catch (e) {
-      print("hunt could not be loaded from file, defaulting to new hunt");
-    }
-  }
-
-  void writeHunt() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString("hunt", toJson());
-  }
-
   fromJson(String source) {
     Map huntMap = jsonDecode(source);
     _title = huntMap['_title'];
-    _stages =
-        (huntMap['_stages'] as List).map((e) => Stage.fromJson(e)).toList();
+    _stages = (huntMap['_stages'] as List).map((e) {
+      var st = Stage.fromJson(e);
+      st.hunt = this;
+      return st;
+    }).toList();
   }
 
   String toJson() {
@@ -73,27 +82,58 @@ class Hunt extends ChangeNotifier {
 }
 
 class Stage {
-  String title;
-  bool hintIsPlace;
-  String hint;
-  String answer;
-  Stage(this.title, this.hintIsPlace, this.hint, this.answer);
+  String _title;
+  bool _hintIsPlace;
+  String _hint;
+  String _answer;
+  Stage(title, hintIsPlace, hint, answer) {
+    this._title = title;
+    this._hintIsPlace = hintIsPlace;
+    this._hint = hint;
+    this._answer = answer;
+  }
+  Hunt hunt;
 
   @override
   String toString() {
-    return title.toString();
+    return _title.toString();
+  }
+
+  String get title => this._title;
+  set title(String value) {
+    this._title = value;
+    this.hunt.notifyAndPersist();
+    print("test");
+  }
+
+  bool get hintIsPlace => this._hintIsPlace;
+  set hintIsPlace(bool value) {
+    this._hintIsPlace = value;
+    this.hunt.notifyAndPersist();
+  }
+
+  String get hint => this._hint;
+  set hint(String value) {
+    this._hint = value;
+    this.hunt.notifyAndPersist();
+  }
+
+  String get answer => this._answer;
+  set answer(String value) {
+    this._answer = value;
+    this.hunt.notifyAndPersist();
   }
 
   Map<String, dynamic> toJson() => {
-        'title': title,
-        'hintIsPlace': hintIsPlace,
-        'hint': hint,
-        'answer': answer
+        'title': _title,
+        'hintIsPlace': _hintIsPlace,
+        'hint': _hint,
+        'answer': _answer
       };
 
   Stage.fromJson(Map<String, dynamic> json)
-      : title = json['title'],
-        hintIsPlace = json['hintIsPlace'],
-        hint = json['hint'],
-        answer = json['answer'];
+      : _title = json['title'],
+        _hintIsPlace = json['hintIsPlace'],
+        _hint = json['hint'],
+        _answer = json['answer'];
 }

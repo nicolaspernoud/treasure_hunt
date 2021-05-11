@@ -20,7 +20,7 @@ void main() {
           "Test stage", false, "The answer is : test stage", "test stage"));
       // Create another hunt from json
       final Hunt hunt2 = Hunt("Should not stay");
-      await hunt2.readHunt();
+      await hunt2.read();
       //print(hunt2.toJson());
       // Check that both hunts are equals
       compareHunts(hunt1, hunt2);

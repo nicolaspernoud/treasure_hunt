@@ -8,7 +8,7 @@ import 'models/hunt.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   var h = Hunt("My hunt");
-  h.readHunt();
+  h.read();
   runApp(
     ChangeNotifierProvider.value(
       value: h,

@@ -35,7 +35,6 @@ class _AdminViewState extends State<AdminView> {
                                             ),
                                             onChanged: (text) {
                                               e.title = text;
-                                              hunt.notifyAndPersist();
                                             },
                                           ),
                                           SwitchListTile(
@@ -44,7 +43,6 @@ class _AdminViewState extends State<AdminView> {
                                             value: e.hintIsPlace,
                                             onChanged: (v) {
                                               e.hintIsPlace = v;
-                                              hunt.notifyAndPersist();
                                             },
                                             secondary: const Icon(Icons.map),
                                           ),
@@ -56,7 +54,6 @@ class _AdminViewState extends State<AdminView> {
                                             ),
                                             onChanged: (text) {
                                               e.hint = text;
-                                              hunt.notifyAndPersist();
                                             },
                                           ),
                                           TextFormField(
@@ -67,7 +64,6 @@ class _AdminViewState extends State<AdminView> {
                                             ),
                                             onChanged: (text) {
                                               e.answer = text;
-                                              hunt.notifyAndPersist();
                                             },
                                           ),
                                         ],
