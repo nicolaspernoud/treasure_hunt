@@ -22,7 +22,7 @@ abstract class SharedPreferencesPersister {
 
   void write() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString("hunt", toJson());
+    prefs.setString("hunt", toJson());
   }
 }
 
@@ -107,7 +107,6 @@ class Stage {
   set title(String value) {
     this._title = value;
     this.hunt.notifyAndPersist();
-    print("test");
   }
 
   bool get hintIsPlace => this._hintIsPlace;
